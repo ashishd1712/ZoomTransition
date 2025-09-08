@@ -11,8 +11,6 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var collectionView: UICollectionView!
     
-    private let transitionAnimator = SharedTransitionAnimator()
-    
     private var selectedIndexPath: IndexPath?
     
     override func viewDidLoad() {
@@ -177,16 +175,6 @@ extension ViewController: UIViewControllerTransitioningDelegate {
             return SharedZoomTransitionAnimator(type: .dismiss, originView: cell)
     }
 }
-
-extension ViewController: SharedTransitioning {
-    var sharedFrame: CGRect {
-        guard let selectedIndexPath, let cell = collectionView.cellForItem(at: selectedIndexPath), let frameInWindow = cell.contentView.frameInWindow else {
-            return .zero
-        }
-        return frameInWindow
-    }
-}
-
 
 //            if #available(iOS 18.0, *) {
 //                nav.preferredTransition = .zoom(sourceViewProvider: { context in

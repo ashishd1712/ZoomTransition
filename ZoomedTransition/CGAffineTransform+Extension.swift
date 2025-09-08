@@ -63,35 +63,33 @@ extension CGAffineTransform {
     }
     
     static func transform(parent: CGRect, soChild child: CGRect, aspectFills rect: CGRect) -> Self {
-        let childRatio = child.width / child.height
-            let rectRatio = rect.width / rect.height
-            
-            // Calculate scale factor to fit the child into rect while maintaining aspect ratio
-            // Use the smaller scale factor to ensure the child fits completely within rect
-            let scaleX = rect.width / child.width
-            let scaleY = rect.height / child.height
-            let scaleFactor = min(scaleX, scaleY)
-            
-            // Calculate the offset from parent center to rect center
-            let offsetX = rect.midX - parent.midX
-            let offsetY = rect.midY - parent.midY
-            
-            // Calculate how much to adjust for the child's position relative to parent center
-            let centerOffsetX = (parent.midX - child.midX) * scaleFactor
-            let centerOffsetY = (parent.midY - child.midY) * scaleFactor
-            
-            // Final translation combines both offsets
-            let translateX = offsetX + centerOffsetX
-            let translateY = offsetY + centerOffsetY
-            
-            // Create and combine transforms
-            let scaleTransform = CGAffineTransform(scaleX: scaleFactor, y: scaleFactor)
-            let translateTransform = CGAffineTransform(translationX: translateX, y: translateY)
-            
-            return scaleTransform.concatenating(translateTransform)
+        
+        // Calculate scale factor to fit the child into rect while maintaining aspect ratio
+        // Use the smaller scale factor to ensure the child fits completely within rect
+        let scaleX = rect.width / child.width
+        let scaleY = rect.height / child.height
+        let scaleFactor = min(scaleX, scaleY)
+        
+        // Calculate the offset from parent center to rect center
+        let offsetX = rect.midX - parent.midX
+        let offsetY = rect.midY - parent.midY
+        
+        // Calculate how much to adjust for the child's position relative to parent center
+        let centerOffsetX = (parent.midX - child.midX) * scaleFactor
+        let centerOffsetY = (parent.midY - child.midY) * scaleFactor
+        
+        // Final translation combines both offsets
+        let translateX = offsetX + centerOffsetX
+        let translateY = offsetY + centerOffsetY
+        
+        // Create and combine transforms
+        let scaleTransform = CGAffineTransform(scaleX: scaleFactor, y: scaleFactor)
+        let translateTransform = CGAffineTransform(translationX: translateX, y: translateY)
+        
+        return scaleTransform.concatenating(translateTransform)
     }
     
-//    static func aspectFitTransform(parent: CGRect, soChild child: CGRect, fits rect: CGRect) -> CGAffineTransform {
+    //    static func aspectFitTransform(parent: CGRect, soChild child: CGRect, fits rect: CGRect) -> CGAffineTransform {
 //        let childRatio = child.width / child.height
 //        let rectRatio = rect.width / rect.height
 //        

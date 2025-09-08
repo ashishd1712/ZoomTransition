@@ -35,7 +35,7 @@ final class SharedZoomTransitionAnimator: NSObject, UIViewControllerAnimatedTran
     
     private let type: TransitionType
     private weak var originView: UIView?
-    private let duration: TimeInterval = 0.35
+    private let duration: TimeInterval = 0.2
     
     init(type: TransitionType, originView: UIView?) {
         self.type = type
@@ -71,12 +71,10 @@ final class SharedZoomTransitionAnimator: NSObject, UIViewControllerAnimatedTran
             
             toView.frame = originFrame
             toView.clipsToBounds = true
-            toView.alpha = 0.3
+            
             UIView.animate(
                 withDuration: duration,
                 delay: 0,
-                usingSpringWithDamping: 0.85,
-                initialSpringVelocity: 0.5,
                 options: [.curveEaseOut]
             ) {
                 toView.frame = transitionContext.finalFrame(for: toVC)
@@ -98,8 +96,6 @@ final class SharedZoomTransitionAnimator: NSObject, UIViewControllerAnimatedTran
             UIView.animate(
                 withDuration: duration,
                 delay: 0,
-                usingSpringWithDamping: 0.85,
-                initialSpringVelocity: 0.5,
                 options: [.curveEaseInOut]
             ) {
                 fromView.frame = originFrame
@@ -120,8 +116,6 @@ final class SharedZoomTransitionAnimator: NSObject, UIViewControllerAnimatedTran
             UIView.animate(
                 withDuration: duration,
                 delay: 0,
-                usingSpringWithDamping: 0.85,
-                initialSpringVelocity: 0.5,
                 options: [.curveEaseInOut]
             ) {
                 toView.frame = transitionContext.finalFrame(for: toVC)
@@ -135,13 +129,11 @@ final class SharedZoomTransitionAnimator: NSObject, UIViewControllerAnimatedTran
             // ---------------------------
         case .pop:
             containerView.insertSubview(toView, belowSubview: fromView)
-            toView.frame = transitionContext.finalFrame(for: toVC) // ✅ ensure visible
+            toView.frame = transitionContext.finalFrame(for: toVC)
             
             UIView.animate(
                 withDuration: duration,
                 delay: 0,
-                usingSpringWithDamping: 0.85,
-                initialSpringVelocity: 0.5,
                 options: [.curveEaseInOut]
             ) {
                 fromView.frame = originFrame
