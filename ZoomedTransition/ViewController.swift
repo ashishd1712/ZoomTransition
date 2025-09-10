@@ -121,6 +121,7 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate {
         let outerView = label?.superview
         label?.text = "Details of Section \(section + 1) Row \(indexPath.row + 1)"
         vc.title = "Details"
+        vc.originView = cell
         outerView?.backgroundColor = cell?.contentView.backgroundColor
         if section % 2 == 0 {
             vc.navigationItem.leftBarButtonItem = UIBarButtonItem(
@@ -135,6 +136,18 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate {
         } else {
             self.navigationController?.pushViewController(vc, animated: true)
         }
+    }
+}
+
+extension ViewController {
+    
+    /// Returns the currently selected cell for interactive transitions
+    func getSelectedCell() -> UIView? {
+        guard let selectedIndexPath = selectedIndexPath,
+              let cell = collectionView.cellForItem(at: selectedIndexPath) else {
+            return nil
+        }
+        return cell
     }
 }
 
