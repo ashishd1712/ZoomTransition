@@ -369,11 +369,11 @@ final class SharedZoomInteractionController: NSObject {
     
     private func triggerNavigation() {
         print("Triggering navigation - isNavigationTransition: \(isNavigationTransition)")
-        
         // NOW trigger the navigation after our manual animation
         if viewController?.presentingViewController != nil {
             viewController?.dismiss(animated: false) // No animation since we already did it
         } else if let navController = viewController?.navigationController {
+            navController.setNavigationBarHidden(false, animated: false)
             navController.popViewController(animated: false)
         }
     }

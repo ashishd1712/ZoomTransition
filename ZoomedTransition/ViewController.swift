@@ -18,6 +18,9 @@ class ViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.collectionViewLayout = createCompositionalLayout()
+        
+//        let interaction = UIContextMenuInteraction(delegate: self)
+//        self.view.addInteraction(interaction)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -137,6 +140,63 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate {
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(identifier: indexPath as NSCopying) {
+            let cell = collectionView.cellForItem(at: indexPath)
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "DummyDetailVC") as! DummyDetailVC
+            let label = vc.view.viewWithTag(100) as? UILabel
+            let outerView = label?.superview
+            label?.text = "Details of Section \(indexPath.section + 1) Row \(indexPath.row + 1)"
+            vc.title = "Details"
+            vc.originView = cell
+            outerView?.backgroundColor = cell?.contentView.backgroundColor
+            return vc
+        } actionProvider: { _ in
+            return nil
+        }
+
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: any UIContextMenuInteractionCommitAnimating) {
+        guard let indexPath = configuration.identifier as? IndexPath, let cell = collectionView.cellForItem(at: indexPath) else { return }
+        self.selectedIndexPath = indexPath
+        
+        animator.addAnimations { [weak self] in
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "DummyDetailVC") as! DummyDetailVC
+            let label = vc.view.viewWithTag(100) as? UILabel
+            let outerView = label?.superview
+            label?.text = "Details of Section \(indexPath.section + 1) Row \(indexPath.row + 1)"
+            vc.title = "Details"
+            vc.originView = cell
+            outerView?.backgroundColor = cell.contentView.backgroundColor
+            if indexPath.section % 2 == 0 {
+                vc.navigationItem.leftBarButtonItem = UIBarButtonItem(
+                        barButtonSystemItem: .close,
+                        target: self,
+                        action: #selector(self?.dismissPresentedVC)
+                    )
+                let nav = UINavigationController(rootViewController: vc)
+                nav.modalPresentationStyle = .custom
+                nav.transitioningDelegate = self
+                self?.present(nav, animated: true)
+            } else {
+                self?.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
+    }
+    
+    private func makeContextMenu() -> UIMenu {
+        let shareAction: UIAction = UIAction(title: "Share", image: UIImage(systemName: "square.and.arrow.up")) { action in
+            //MARK: - Action here
+        }
+        let deleteAction: UIAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
+            //MARK: - Action here
+        }
+        return UIMenu(children: [shareAction, deleteAction])
+    }
 }
 
 extension ViewController {
@@ -188,6 +248,24 @@ extension ViewController: UIViewControllerTransitioningDelegate {
             return SharedZoomTransitionAnimator(type: .dismiss, originView: cell)
     }
 }
+
+//extension ViewController: UIContextMenuInteractionDelegate {
+//    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+//        return UIContextMenuConfiguration(actionProvider:  { [weak self]  _ in
+//            return self?.makeContextMenu()
+//        })
+//    }
+//    
+//    private func makeContextMenu() -> UIMenu {
+//        let shareAction: UIAction = UIAction(title: "Share", image: UIImage(systemName: "square.and.arrow.up")) { action in
+//            //MARK: - Action here
+//        }
+//        let deleteAction: UIAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
+//            //MARK: - Action here
+//        }
+//        return UIMenu(children: [shareAction, deleteAction])
+//    }
+//}
 
 //            if #available(iOS 18.0, *) {
 //                nav.preferredTransition = .zoom(sourceViewProvider: { context in
